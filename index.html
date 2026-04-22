@@ -30,8 +30,10 @@ body{
 ========================= */
 #device{
     position:relative;
-    width:min(92vw,620px);
+    width:min(88vw,580px);
     aspect-ratio:768 / 1365;
+
+    margin:auto;
 }
 
 /* =========================
@@ -42,12 +44,12 @@ body{
     inset:0;
 
     background-image:url("assets/ui/rejeckt-shell.png");
-    background-size:contain;
+    background-size:100% auto;
     background-repeat:no-repeat;
-    background-position:center;
+    background-position:center top;
+
     z-index:1;
 }
-
 /* =========================
    GAME SCREEN LAYER
 ========================= */
@@ -127,29 +129,27 @@ button{
 }
 
 /* D-PAD */
+/* D-PAD */
 #btn-up{
-    left:17%;
+    left:16%;
     top:67%;
     width:8%;
     height:6%;
 }
-
 #btn-down{
-    left:17%;
+    left:16%;
     top:81%;
     width:8%;
     height:6%;
 }
-
 #btn-left{
-    left:10%;
+    left:9%;
     top:74%;
     width:8%;
     height:6%;
 }
-
 #btn-right{
-    left:24%;
+    left:23%;
     top:74%;
     width:8%;
     height:6%;
@@ -157,16 +157,15 @@ button{
 
 /* A / B */
 #btn-a{
-    left:74%;
+    left:72%;
     top:70%;
     width:10%;
     height:8%;
     border-radius:50%;
 }
-
 #btn-b{
-    left:61%;
-    top:78%;
+    left:59%;
+    top:77%;
     width:10%;
     height:8%;
     border-radius:50%;
@@ -175,14 +174,13 @@ button{
 /* SELECT / START */
 #btn-select{
     left:41%;
-    top:90%;
+    top:88%;
     width:10%;
     height:4%;
 }
-
 #btn-start{
     left:55%;
-    top:90%;
+    top:88%;
     width:10%;
     height:4%;
 }
