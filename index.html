@@ -121,85 +121,71 @@ button:active{
 
 </div>
 
-</body>
-
 <script>
 const game = document.getElementById("game");
-const scoreText = document.getElementById("score");
 
-/* =========================
-   PET SYSTEM
-========================= */
+/* score box */
+const scoreText = document.createElement("div");
+scoreText.id = "score";
+scoreText.style.position = "absolute";
+scoreText.style.top = "5px";
+scoreText.style.left = "5px";
+scoreText.style.fontSize = "14px";
+scoreText.innerHTML = "Score: 0";
+game.appendChild(scoreText);
 
+/* pet */
 const pet = document.createElement("div");
 pet.id = "pet";
 game.appendChild(pet);
 
 let petX = 110;
+let score = 0;
 let currentPet = "base";
-let currentRow = 0;
 let currentFrame = 0;
 let animTimer;
 
-/* load sheet */
 function loadPet(name){
-    currentPet = name;
-    pet.style.backgroundImage =
-  `url("assets/pet/${name}.png")`;
-
-    /* 4 cols x 5 rows, each displayed 96x96 */
-    pet.style.backgroundSize = "384px 480px";
+  currentPet = name;
+  pet.style.backgroundImage = `url("assets/pet/${name}.png")`;
+  pet.style.backgroundSize = "384px 480px";
 }
 
-/* draw frame */
 function drawFrame(col,row){
-    pet.style.backgroundPosition =
-      `${-col*96}px ${-row*96}px`;
+  pet.style.backgroundPosition = `${-col*96}px ${-row*96}px`;
 }
 
-/* animate row */
 function playRow(row){
+  clearInterval(animTimer);
 
-    clearInterval(animTimer);
-    currentRow = row;
-    currentFrame = 0;
+  if(row===4){
+    drawFrame(0,4);
+    return;
+  }
 
-    /* sleep row = static frame */
-    if(row === 4){
-        drawFrame(0,4);
-        return;
-    }
+  currentFrame = 0;
 
-    animTimer = setInterval(()=>{
-        drawFrame(currentFrame,row);
-        currentFrame++;
-        if(currentFrame > 3) currentFrame = 0;
-    },250);
+  animTimer = setInterval(()=>{
+    drawFrame(currentFrame,row);
+    currentFrame++;
+    if(currentFrame>3) currentFrame=0;
+  },250);
 }
 
-/* movement */
 function moveLeft(){
-    petX -= 32;
-    if(petX < 0) petX = 0;
-    pet.style.left = petX + "px";
+  petX -= 32;
+  if(petX < 0) petX = 0;
+  pet.style.left = petX + "px";
 }
 
 function moveRight(){
-    petX += 32;
-    if(petX > 224) petX = 224;
-    pet.style.left = petX + "px";
+  petX += 32;
+  if(petX > 224) petX = 224;
+  pet.style.left = petX + "px";
 }
 
-/* start pet */
 loadPet("base");
 playRow(0);
-
-/* =========================
-   FALLING ITEM GAME
-========================= */
-
-let score = 0;
-const lanes = [0,64,128,192,256];
 
 const items = [
  "assets/items/food.png",
@@ -208,93 +194,63 @@ const items = [
 
 function spawnItem(){
 
-    const item = document.createElement("div");
-item.className = "item";
+  const item = document.createElement("div");
+  item.className = "item";
 
-let chosen =
-items[Math.floor(Math.random()*items.length)];
+  let chosen = items[Math.floor(Math.random()*items.length)];
 
-item.style.backgroundImage =
-  `url("${chosen}")`;
+  item.style.backgroundImage = `url("${chosen}")`;
+  item.style.backgroundPosition = "0px 0px";
 
-item.style.backgroundPosition = "0px 0px";
-      items[Math.floor(Math.random()*items.length)];
+  let lane = [0,64,128,192,256][Math.floor(Math.random()*5)];
+  let x = lane;
+  let y = 0;
 
-    let lane = lanes[Math.floor(Math.random()*lanes.length)];
-    let x = lane;
-    let y = 0;
+  item.style.left = x + "px";
+  item.style.top = y + "px";
 
-    item.style.left = x + "px";
+  game.appendChild(item);
+
+  let fall = setInterval(()=>{
+
+    y += 4;
     item.style.top = y + "px";
 
-    game.appendChild(item);
+    if(y > 170 && Math.abs(x-petX) < 50){
+      score++;
+      scoreText.innerHTML = "Score: " + score;
+      item.remove();
+      clearInterval(fall);
 
-    let fall = setInterval(()=>{
+      playRow(1);
 
-        y += 4;
-        item.style.top = y + "px";
+      setTimeout(()=>playRow(0),1000);
+    }
 
-        /* catch */
-        if(y > 170 && Math.abs(x - petX) < 50){
-            score++;
-            scoreText.innerHTML = "Score: " + score;
-            item.remove();
-            clearInterval(fall);
+    if(y > 240){
+      item.remove();
+      clearInterval(fall);
+    }
 
-            playRow(1); /* eat */
-
-            setTimeout(()=>{
-                playRow(0);
-            },1000);
-        }
-
-        /* miss */
-        if(y > 240){
-            item.remove();
-            clearInterval(fall);
-        }
-
-    },50);
+  },50);
 }
 
 setInterval(spawnItem,1400);
 
-/* =========================
-   BUTTONS
-========================= */
-
+/* buttons */
 document.getElementById("btn-left").onclick = moveLeft;
 document.getElementById("btn-right").onclick = moveRight;
 
-/* A = cycle forms */
-document.getElementById("btn-a").onclick = actionA = ()=>{
+document.getElementById("btn-a").onclick = ()=>{
+  if(currentPet==="base") loadPet("balanced");
+  else if(currentPet==="balanced") loadPet("strong");
+  else loadPet("base");
 
-    if(currentPet === "base"){
-        loadPet("balanced");
-    }else if(currentPet === "balanced"){
-        loadPet("strong");
-    }else{
-        loadPet("base");
-    }
-
-    playRow(0);
+  playRow(0);
 };
 
-	/* B = sleep */
-	document.getElementById("btn-b").onclick = actionB; = ()=>{
-	    playRow(4);
-	
-    setTimeout(()=>{
-        playRow(0);
-    },2000);
+document.getElementById("btn-b").onclick = ()=>{
+  playRow(4);
+  setTimeout(()=>playRow(0),2000);
 };
-
-/* keyboard support */
-document.addEventListener("keydown", e=>{
-    if(e.key==="ArrowLeft") moveLeft();
-    if(e.key==="ArrowRight") moveRight();
-});
 </script>
-
-</body>
-</html>
