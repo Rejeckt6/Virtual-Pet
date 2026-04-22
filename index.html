@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Rejeckt Pet</title>
 
 <style>
-/* RESET */
+/* =========================
+   RESET
+========================= */
 *{
     margin:0;
     padding:0;
@@ -24,51 +26,61 @@ body{
 }
 
 /* =========================
-   SHELL
+   DEVICE ROOT
 ========================= */
-#shell{
+#device{
     position:relative;
-
     width:min(92vw,620px);
     aspect-ratio:768 / 1365;
+}
+
+/* =========================
+   SHELL ART LAYER
+========================= */
+#shellArt{
+    position:absolute;
+    inset:0;
 
     background-image:url("assets/ui/rejeckt-shell.png");
     background-size:contain;
     background-repeat:no-repeat;
     background-position:center;
-
-    transform:translateY(-38px);
+    z-index:1;
 }
+
 /* =========================
-   SCREEN
+   GAME SCREEN LAYER
 ========================= */
 #game{
     position:absolute;
 
-    left:26%;
-    top:20%;
+    left:27%;
+    top:16.2%;
 
-    width:48%;
-    aspect-ratio:1 / 1;
+    width:46%;
+    aspect-ratio:1/1;
 
     background:#8bac0f;
-    border-radius:8px;
+    border-radius:10px;
     overflow:hidden;
 
-    box-shadow: inset 0 0 8px rgba(0,0,0,.22);
+    box-shadow:
+        inset 0 0 8px rgba(0,0,0,.25);
+
+    z-index:2;
 }
+
 /* =========================
    SCORE
 ========================= */
 #score{
     position:absolute;
-    top:6px;
+    top:8px;
     left:8px;
-    z-index:20;
-
     font-size:14px;
     font-weight:bold;
     color:#1d2b00;
+    z-index:10;
 }
 
 /* =========================
@@ -76,24 +88,20 @@ body{
 ========================= */
 #pet{
     position:absolute;
-
     width:96px;
     height:96px;
-
-    left:50%;
-    bottom:8px;
-    transform:translateX(-50%);
+    bottom:6px;
 
     background-repeat:no-repeat;
     image-rendering:pixelated;
+    z-index:5;
 }
 
 /* =========================
-   FALLING ITEMS
+   ITEMS
 ========================= */
 .item{
     position:absolute;
-
     width:48px;
     height:48px;
 
@@ -103,38 +111,45 @@ body{
 }
 
 /* =========================
-   TOUCH BUTTONS
+   CONTROL LAYER
 ========================= */
+#controls{
+    position:absolute;
+    inset:0;
+    z-index:20;
+}
+
 button{
     position:absolute;
     border:none;
-    background:rgba(0,120,255,.18); /* temporary debug */
+    background:transparent;
+    opacity:0;
 }
 
 /* D-PAD */
 #btn-up{
-    left:14%;
+    left:17%;
     top:67%;
     width:8%;
     height:6%;
 }
 
 #btn-down{
-    left:14%;
+    left:17%;
     top:81%;
     width:8%;
     height:6%;
 }
 
 #btn-left{
-    left:8%;
+    left:10%;
     top:74%;
     width:8%;
     height:6%;
 }
 
 #btn-right{
-    left:20%;
+    left:24%;
     top:74%;
     width:8%;
     height:6%;
@@ -142,15 +157,15 @@ button{
 
 /* A / B */
 #btn-a{
-    left:79%;
-    top:69%;
+    left:74%;
+    top:70%;
     width:10%;
     height:8%;
     border-radius:50%;
 }
 
 #btn-b{
-    left:64%;
+    left:61%;
     top:78%;
     width:10%;
     height:8%;
@@ -159,16 +174,16 @@ button{
 
 /* SELECT / START */
 #btn-select{
-    left:42%;
-    top:91%;
-    width:9%;
+    left:41%;
+    top:90%;
+    width:10%;
     height:4%;
 }
 
 #btn-start{
-    left:56%;
-    top:91%;
-    width:9%;
+    left:55%;
+    top:90%;
+    width:10%;
     height:4%;
 }
 </style>
@@ -176,23 +191,31 @@ button{
 
 <body>
 
-<div id="shell">
+<div id="device">
 
+    <!-- UI ART -->
+    <div id="shellArt"></div>
+
+    <!-- GAME -->
     <div id="game">
         <div id="score">Score: 0</div>
     </div>
 
-    <!-- controls -->
-    <button id="btn-up"></button>
-    <button id="btn-left"></button>
-    <button id="btn-right"></button>
-    <button id="btn-down"></button>
+    <!-- CONTROLS -->
+    <div id="controls">
 
-    <button id="btn-a"></button>
-    <button id="btn-b"></button>
+        <button id="btn-up"></button>
+        <button id="btn-down"></button>
+        <button id="btn-left"></button>
+        <button id="btn-right"></button>
 
-    <button id="btn-select"></button>
-    <button id="btn-start"></button>
+        <button id="btn-a"></button>
+        <button id="btn-b"></button>
+
+        <button id="btn-select"></button>
+        <button id="btn-start"></button>
+
+    </div>
 
 </div>
 
@@ -207,30 +230,41 @@ const pet = document.createElement("div");
 pet.id = "pet";
 game.appendChild(pet);
 
-let petLane = 2;   // center lane
+let petLane = 2;
 let score = 0;
 
 let currentPet = "base";
 let currentFrame = 0;
 let animTimer;
 
-/* lanes based on screen width */
+/* lane positions */
 function getLanes(){
     const w = game.clientWidth;
+
     return [
-        w * 0.02,
-        w * 0.22,
-        w * 0.42,
-        w * 0.62,
-        w * 0.82
+        w * 0.10,
+        w * 0.30,
+        w * 0.50,
+        w * 0.70,
+        w * 0.90
     ];
 }
 
-/* load pet sheet */
+/* pet x */
+function updatePetPos(){
+    const lanes = getLanes();
+
+    pet.style.left = lanes[petLane] + "px";
+    pet.style.transform = "translateX(-50%)";
+}
+
+/* load sheet */
 function loadPet(name){
     currentPet = name;
+
     pet.style.backgroundImage =
         `url("assets/pet/${name}.png")`;
+
     pet.style.backgroundSize = "384px 480px";
 }
 
@@ -240,7 +274,7 @@ function drawFrame(col,row){
         `${-col*96}px ${-row*96}px`;
 }
 
-/* animate */
+/* animate row */
 function playRow(row){
 
     clearInterval(animTimer);
@@ -253,19 +287,16 @@ function playRow(row){
     currentFrame = 0;
 
     animTimer = setInterval(()=>{
+
         drawFrame(currentFrame,row);
+
         currentFrame++;
         if(currentFrame > 3) currentFrame = 0;
+
     },250);
 }
 
-/* pet movement */
-function updatePetPos(){
-    const lanes = getLanes();
-    pet.style.left = lanes[petLane] + "px";
-    pet.style.transform = "translateX(-50%)";
-}
-
+/* move */
 function moveLeft(){
     petLane--;
     if(petLane < 0) petLane = 0;
@@ -319,16 +350,20 @@ function spawnItem(){
         item.style.top = y + "px";
 
         /* catch */
-        if(y > game.clientHeight - 70 && lane === petLane){
+        if(y > game.clientHeight - 72 && lane === petLane){
 
             score++;
-            scoreText.innerHTML = "Score: " + score;
+            scoreText.innerHTML =
+                "Score: " + score;
 
             item.remove();
             clearInterval(fall);
 
             playRow(1);
-            setTimeout(()=>playRow(0),900);
+
+            setTimeout(()=>{
+                playRow(0);
+            },900);
         }
 
         /* miss */
@@ -348,14 +383,16 @@ setInterval(spawnItem,1400);
 document.getElementById("btn-left").onclick = moveLeft;
 document.getElementById("btn-right").onclick = moveRight;
 
-/* A = evolve cycle */
+/* A = form swap */
 document.getElementById("btn-a").onclick = ()=>{
 
     if(currentPet === "base"){
         loadPet("balanced");
-    }else if(currentPet === "balanced"){
+    }
+    else if(currentPet === "balanced"){
         loadPet("strong");
-    }else{
+    }
+    else{
         loadPet("base");
     }
 
@@ -372,10 +409,12 @@ document.getElementById("btn-b").onclick = ()=>{
     },2000);
 };
 
-/* keyboard support */
+/* keyboard */
 document.addEventListener("keydown", e=>{
-    if(e.key==="ArrowLeft") moveLeft();
-    if(e.key==="ArrowRight") moveRight();
+
+    if(e.key === "ArrowLeft") moveLeft();
+    if(e.key === "ArrowRight") moveRight();
+
 });
 </script>
 
