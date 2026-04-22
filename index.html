@@ -17,23 +17,27 @@ body{
 
 #shell{
     position:relative;
-    width:430px;
-    height:760px;
+    width:min(95vw, 700px);
+    aspect-ratio:430 / 760;
+
     background-image:url("assets/ui/rejeckt-shell.png");
-    background-size:contain;
+    background-size:100% 100%;
     background-repeat:no-repeat;
 }
 
 /* Screen placement */
 #game{
     position:absolute;
-    left:95px;
-    top:92px;
-    width:240px;
-    height:240px;
+
+    left:19%;
+    top:13%;
+
+    width:61%;
+    height:38%;
+
     background:#8bac0f;
     overflow:hidden;
-    border-radius:8px;
+    border-radius:10px;
 }
 
 /* Pet */
@@ -80,21 +84,22 @@ button{
     position:absolute;
     opacity:0;
     border:none;
+    background:none;
 }
 
 /* Dpad */
-#btn-up{left:55px; top:455px; width:70px; height:45px;}
-#btn-down{left:55px; top:545px; width:70px; height:45px;}
-#btn-left{left:10px; top:500px; width:55px; height:70px;}
-#btn-right{left:115px; top:500px; width:55px; height:70px;}
+#btn-left{left:8%; top:63%; width:10%; height:8%;}
+#btn-right{left:25%; top:63%; width:10%; height:8%;}
+#btn-up{left:16%; top:56%; width:10%; height:8%;}
+#btn-down{left:16%; top:71%; width:10%; height:8%;}
 
 /* A/B */
-#btn-a{left:335px; top:470px; width:65px; height:65px;}
-#btn-b{left:255px; top:530px; width:65px; height:65px;}
+#btn-a{left:77%; top:58%; width:12%; height:8%;}
+#btn-b{left:63%; top:66%; width:12%; height:8%;}
 
-/* Start Select */
-#btn-select{left:170px; top:620px; width:60px; height:30px;}
-#btn-start{left:250px; top:620px; width:60px; height:30px;}
+/* Select/Start */
+#btn-select{left:42%; top:80%; width:10%; height:4%;}
+#btn-start{left:56%; top:80%; width:10%; height:4%;}
 
 button:active{
     transform:scale(.92);
