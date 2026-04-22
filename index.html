@@ -106,26 +106,68 @@ body{
 button{
     position:absolute;
     border:none;
-    background:transparent;
-    opacity:0;
+    background:rgba(0,120,255,.18); /* temporary debug */
 }
 
 /* D-PAD */
-#btn-left  { left:8%;  top:63%; width:11%; height:8%; }
-#btn-right { left:24%; top:63%; width:11%; height:8%; }
-#btn-up    { left:16%; top:56%; width:11%; height:8%; }
-#btn-down  { left:16%; top:70%; width:11%; height:8%; }
+#btn-up{
+    left:14%;
+    top:67%;
+    width:8%;
+    height:6%;
+}
+
+#btn-down{
+    left:14%;
+    top:81%;
+    width:8%;
+    height:6%;
+}
+
+#btn-left{
+    left:8%;
+    top:74%;
+    width:8%;
+    height:6%;
+}
+
+#btn-right{
+    left:20%;
+    top:74%;
+    width:8%;
+    height:6%;
+}
 
 /* A / B */
-#btn-a { left:76%; top:58%; width:12%; height:9%; }
-#btn-b { left:63%; top:66%; width:12%; height:9%; }
+#btn-a{
+    left:79%;
+    top:69%;
+    width:10%;
+    height:8%;
+    border-radius:50%;
+}
+
+#btn-b{
+    left:64%;
+    top:78%;
+    width:10%;
+    height:8%;
+    border-radius:50%;
+}
 
 /* SELECT / START */
-#btn-select { left:41%; top:80%; width:11%; height:4%; }
-#btn-start  { left:55%; top:80%; width:11%; height:4%; }
+#btn-select{
+    left:42%;
+    top:91%;
+    width:9%;
+    height:4%;
+}
 
-button:active{
-    transform:scale(.95);
+#btn-start{
+    left:56%;
+    top:91%;
+    width:9%;
+    height:4%;
 }
 </style>
 </head>
