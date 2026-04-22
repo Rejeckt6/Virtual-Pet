@@ -2,107 +2,130 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <title>Rejeckt Pet</title>
 
 <style>
-body{
+/* RESET */
+*{
     margin:0;
-    background:#111;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#000;
+    min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    height:100vh;
+    overflow:hidden;
+    font-family:Arial, sans-serif;
 }
 
+/* =========================
+   SHELL
+========================= */
 #shell{
     position:relative;
-    width:min(95vw, 700px);
+
+    width:min(96vw, 700px);
     aspect-ratio:430 / 760;
 
     background-image:url("assets/ui/rejeckt-shell.png");
     background-size:100% 100%;
     background-repeat:no-repeat;
+    background-position:center;
 }
 
-/* Screen placement */
+/* =========================
+   SCREEN
+========================= */
 #game{
     position:absolute;
 
-    left:19%;
-    top:13%;
+    left:21%;
+    top:14%;
 
-    width:61%;
+    width:58%;
     height:38%;
 
     background:#8bac0f;
-    overflow:hidden;
     border-radius:10px;
+    overflow:hidden;
 }
 
-/* Pet */
+/* =========================
+   SCORE
+========================= */
+#score{
+    position:absolute;
+    top:6px;
+    left:8px;
+    z-index:20;
+
+    font-size:14px;
+    font-weight:bold;
+    color:#1d2b00;
+}
+
+/* =========================
+   PET
+========================= */
 #pet{
     position:absolute;
+
     width:96px;
     height:96px;
-    bottom:10px;
-    left:110px;
+
+    left:50%;
+    bottom:8px;
+    transform:translateX(-50%);
+
     background-repeat:no-repeat;
     image-rendering:pixelated;
 }
 
-/* Falling Items */
+/* =========================
+   FALLING ITEMS
+========================= */
 .item{
     position:absolute;
+
     width:48px;
     height:48px;
+
     background-repeat:no-repeat;
-
-    /* 4 columns × 2 rows */
     background-size:192px 96px;
-
     image-rendering:pixelated;
 }
 
-/* Score */
-#score{
-    text-align:center;
-    margin-top:10px;
-    font-weight:bold;
-    color:#222;
-}
-
-/* Controls */
-.controls{
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
-    margin-top:15px;
-}
-
+/* =========================
+   TOUCH BUTTONS
+========================= */
 button{
     position:absolute;
-    opacity:0;
     border:none;
-    background:none;
+    background:transparent;
+    opacity:0;
 }
 
-/* Dpad */
-#btn-left{left:8%; top:63%; width:10%; height:8%;}
-#btn-right{left:25%; top:63%; width:10%; height:8%;}
-#btn-up{left:16%; top:56%; width:10%; height:8%;}
-#btn-down{left:16%; top:71%; width:10%; height:8%;}
+/* D-PAD */
+#btn-left  { left:8%;  top:63%; width:11%; height:8%; }
+#btn-right { left:24%; top:63%; width:11%; height:8%; }
+#btn-up    { left:16%; top:56%; width:11%; height:8%; }
+#btn-down  { left:16%; top:70%; width:11%; height:8%; }
 
-/* A/B */
-#btn-a{left:77%; top:58%; width:12%; height:8%;}
-#btn-b{left:63%; top:66%; width:12%; height:8%;}
+/* A / B */
+#btn-a { left:76%; top:58%; width:12%; height:9%; }
+#btn-b { left:63%; top:66%; width:12%; height:9%; }
 
-/* Select/Start */
-#btn-select{left:42%; top:80%; width:10%; height:4%;}
-#btn-start{left:56%; top:80%; width:10%; height:4%;}
+/* SELECT / START */
+#btn-select { left:41%; top:80%; width:11%; height:4%; }
+#btn-start  { left:55%; top:80%; width:11%; height:4%; }
 
 button:active{
-    transform:scale(.92);
+    transform:scale(.95);
 }
 </style>
 </head>
@@ -111,8 +134,11 @@ button:active{
 
 <div id="shell">
 
-    <div id="game"></div>
+    <div id="game">
+        <div id="score">Score: 0</div>
+    </div>
 
+    <!-- controls -->
     <button id="btn-up"></button>
     <button id="btn-left"></button>
     <button id="btn-right"></button>
@@ -121,141 +147,193 @@ button:active{
     <button id="btn-a"></button>
     <button id="btn-b"></button>
 
-    <button id="btn-start"></button>
     <button id="btn-select"></button>
+    <button id="btn-start"></button>
 
 </div>
 
 <script>
 const game = document.getElementById("game");
+const scoreText = document.getElementById("score");
 
-/* score box */
-const scoreText = document.createElement("div");
-scoreText.id = "score";
-scoreText.style.position = "absolute";
-scoreText.style.top = "5px";
-scoreText.style.left = "5px";
-scoreText.style.fontSize = "14px";
-scoreText.innerHTML = "Score: 0";
-game.appendChild(scoreText);
-
-/* pet */
+/* =========================
+   PET
+========================= */
 const pet = document.createElement("div");
 pet.id = "pet";
 game.appendChild(pet);
 
-let petX = 110;
+let petLane = 2;   // center lane
 let score = 0;
+
 let currentPet = "base";
 let currentFrame = 0;
 let animTimer;
 
+/* lanes based on screen width */
+function getLanes(){
+    const w = game.clientWidth;
+    return [
+        w * 0.02,
+        w * 0.22,
+        w * 0.42,
+        w * 0.62,
+        w * 0.82
+    ];
+}
+
+/* load pet sheet */
 function loadPet(name){
-  currentPet = name;
-  pet.style.backgroundImage = `url("assets/pet/${name}.png")`;
-  pet.style.backgroundSize = "384px 480px";
+    currentPet = name;
+    pet.style.backgroundImage =
+        `url("assets/pet/${name}.png")`;
+    pet.style.backgroundSize = "384px 480px";
 }
 
+/* draw frame */
 function drawFrame(col,row){
-  pet.style.backgroundPosition = `${-col*96}px ${-row*96}px`;
+    pet.style.backgroundPosition =
+        `${-col*96}px ${-row*96}px`;
 }
 
+/* animate */
 function playRow(row){
-  clearInterval(animTimer);
 
-  if(row===4){
-    drawFrame(0,4);
-    return;
-  }
+    clearInterval(animTimer);
 
-  currentFrame = 0;
+    if(row === 4){
+        drawFrame(0,4);
+        return;
+    }
 
-  animTimer = setInterval(()=>{
-    drawFrame(currentFrame,row);
-    currentFrame++;
-    if(currentFrame>3) currentFrame=0;
-  },250);
+    currentFrame = 0;
+
+    animTimer = setInterval(()=>{
+        drawFrame(currentFrame,row);
+        currentFrame++;
+        if(currentFrame > 3) currentFrame = 0;
+    },250);
+}
+
+/* pet movement */
+function updatePetPos(){
+    const lanes = getLanes();
+    pet.style.left = lanes[petLane] + "px";
+    pet.style.transform = "translateX(-50%)";
 }
 
 function moveLeft(){
-  petX -= 32;
-  if(petX < 0) petX = 0;
-  pet.style.left = petX + "px";
+    petLane--;
+    if(petLane < 0) petLane = 0;
+    updatePetPos();
 }
 
 function moveRight(){
-  petX += 32;
-  if(petX > 224) petX = 224;
-  pet.style.left = petX + "px";
+    petLane++;
+    if(petLane > 4) petLane = 4;
+    updatePetPos();
 }
 
+/* init pet */
 loadPet("base");
 playRow(0);
+updatePetPos();
 
+/* =========================
+   ITEMS
+========================= */
 const items = [
- "assets/items/food.png",
- "assets/items/drink.png"
+    "assets/items/food.png",
+    "assets/items/drink.png"
 ];
 
 function spawnItem(){
 
-  const item = document.createElement("div");
-  item.className = "item";
+    const item = document.createElement("div");
+    item.className = "item";
 
-  let chosen = items[Math.floor(Math.random()*items.length)];
+    const chosen =
+        items[Math.floor(Math.random()*items.length)];
 
-  item.style.backgroundImage = `url("${chosen}")`;
-  item.style.backgroundPosition = "0px 0px";
+    item.style.backgroundImage =
+        `url("${chosen}")`;
 
-  let lane = [0,64,128,192,256][Math.floor(Math.random()*5)];
-  let x = lane;
-  let y = 0;
+    item.style.backgroundPosition = "0px 0px";
 
-  item.style.left = x + "px";
-  item.style.top = y + "px";
+    let lane = Math.floor(Math.random()*5);
+    let x = getLanes()[lane];
+    let y = -20;
 
-  game.appendChild(item);
-
-  let fall = setInterval(()=>{
-
-    y += 4;
+    item.style.left = x + "px";
     item.style.top = y + "px";
 
-    if(y > 170 && Math.abs(x-petX) < 50){
-      score++;
-      scoreText.innerHTML = "Score: " + score;
-      item.remove();
-      clearInterval(fall);
+    game.appendChild(item);
 
-      playRow(1);
+    const fall = setInterval(()=>{
 
-      setTimeout(()=>playRow(0),1000);
-    }
+        y += 4;
+        item.style.top = y + "px";
 
-    if(y > 240){
-      item.remove();
-      clearInterval(fall);
-    }
+        /* catch */
+        if(y > game.clientHeight - 70 && lane === petLane){
 
-  },50);
+            score++;
+            scoreText.innerHTML = "Score: " + score;
+
+            item.remove();
+            clearInterval(fall);
+
+            playRow(1);
+            setTimeout(()=>playRow(0),900);
+        }
+
+        /* miss */
+        if(y > game.clientHeight + 20){
+            item.remove();
+            clearInterval(fall);
+        }
+
+    },50);
 }
 
 setInterval(spawnItem,1400);
 
-/* buttons */
+/* =========================
+   BUTTONS
+========================= */
 document.getElementById("btn-left").onclick = moveLeft;
 document.getElementById("btn-right").onclick = moveRight;
 
+/* A = evolve cycle */
 document.getElementById("btn-a").onclick = ()=>{
-  if(currentPet==="base") loadPet("balanced");
-  else if(currentPet==="balanced") loadPet("strong");
-  else loadPet("base");
 
-  playRow(0);
+    if(currentPet === "base"){
+        loadPet("balanced");
+    }else if(currentPet === "balanced"){
+        loadPet("strong");
+    }else{
+        loadPet("base");
+    }
+
+    playRow(0);
 };
 
+/* B = sleep */
 document.getElementById("btn-b").onclick = ()=>{
-  playRow(4);
-  setTimeout(()=>playRow(0),2000);
+
+    playRow(4);
+
+    setTimeout(()=>{
+        playRow(0);
+    },2000);
 };
+
+/* keyboard support */
+document.addEventListener("keydown", e=>{
+    if(e.key==="ArrowLeft") moveLeft();
+    if(e.key==="ArrowRight") moveRight();
+});
 </script>
+
+</body>
+</html>
