@@ -30,6 +30,8 @@ body{
 ========================= */
 #device{
     position:relative;
+    width:min(92vw,900px);
+    aspect-ratio:768 / 1365;
 }
 
 /* =========================
@@ -38,28 +40,19 @@ body{
 #shellArt{
     position:absolute;
     inset:0;
-
     background-image:url("assets/ui/rejeckt-shell.png");
-    background-size:100% auto;
+    background-size:contain;
     background-repeat:no-repeat;
-    background-position:center top;
-
-    z-index:1;
+    background-position:center;
 }
 /* =========================
    GAME SCREEN LAYER
 ========================= */
 #game{
-    position:absolute;
     left:22%;
     top:16%;
     width:56%;
     height:50%;
-    background:#8bac0f;
-    overflow:hidden;
-    border-radius:10px;
-    border:3px solid red;
-    z-index:2;
 }
 /* =========================
    SCORE
