@@ -18,7 +18,8 @@
 body{
     background:black;
 
-    min-height:100vh;
+    width:100vw;
+    height:100vh;
 
     display:flex;
     justify-content:center;
@@ -28,18 +29,21 @@ body{
 }
 
 /* =========================
-   DEVICE ROOT
+   DEVICE WRAPPER
 ========================= */
+
 #device{
     position:relative;
 
-    width:min(92vw, 820px);
+    width:min(90vw, 700px);
 
-    aspect-ratio:1/1;
+    aspect-ratio:1 / 1;
 }
+
 /* =========================
-   SHELL ART LAYER
+   SHELL IMAGE
 ========================= */
+
 #shellArt{
     position:absolute;
     inset:0;
@@ -54,331 +58,82 @@ body{
 
     z-index:1;
 }
+
 /* =========================
-   GAME SCREEN LAYER
+   GAME SCREEN
 ========================= */
+
 #game{
     position:absolute;
 
-    /* LCD SCREEN POSITION */
-    left:26%;
-    top:19%;
+    /* SCREEN ALIGNMENT */
+    left:31%;
+    top:25%;
 
-    /* LCD SCREEN SIZE */
-    width:48%;
-    height:40%;
+    width:38%;
+    height:35%;
 
-    background:#8bac0f;
+    background:#a4ad95;
 
     overflow:hidden;
 
-    border-radius:6px;
+    border-radius:4px;
 
     z-index:2;
 }
+
 /* =========================
    SCORE
 ========================= */
+
 #score{
     position:absolute;
-    top:8px;
-    left:8px;
+
+    top:6px;
+    left:6px;
+
     font-size:14px;
     font-weight:bold;
-    color:#1d2b00;
+
+    color:#1c240f;
+
     z-index:10;
 }
 
 /* =========================
    PET
 ========================= */
+
 #pet{
     position:absolute;
+
     width:96px;
     height:96px;
-    bottom:6px;
+
+    bottom:0;
+    left:80px;
 
     background-repeat:no-repeat;
+
     image-rendering:pixelated;
+
     z-index:5;
 }
 
 /* =========================
    ITEMS
 ========================= */
+
 .item{
     position:absolute;
-    width:48px;
-    height:48px;
+
+    width:32px;
+    height:32px;
 
     background-repeat:no-repeat;
-    background-size:192px 96px;
+
     image-rendering:pixelated;
 }
-
-/* =========================
-   CONTROL LAYER
-========================= */
-#controls{
-    position:absolute;
-    inset:0;
-    z-index:20;
-}
-
-button{
-    position:absolute;
-    border:none;
-    background:transparent;
-    opacity:0;
-}
-
-/* D-PAD */
-/* D-PAD */
-#btn-up{
-    left:16%;
-    top:67%;
-    width:8%;
-    height:6%;
-}
-#btn-down{
-    left:16%;
-    top:81%;
-    width:8%;
-    height:6%;
-}
-#btn-left{
-    left:9%;
-    top:74%;
-    width:8%;
-    height:6%;
-}
-#btn-right{
-    left:23%;
-    top:74%;
-    width:8%;
-    height:6%;
-}
-
-/* A / B */
-#btn-a{
-    left:72%;
-    top:70%;
-    width:10%;
-    height:8%;
-    border-radius:50%;
-}
-#btn-b{
-    left:59%;
-    top:77%;
-    width:10%;
-    height:8%;
-    border-radius:50%;
-}
-
-/* SELECT / START */
-#btn-select{
-    left:41%;
-    top:88%;
-    width:10%;
-    height:4%;
-}
-#btn-start{
-    left:55%;
-    top:88%;
-    width:10%;
-    height:4%;
-}
-</style>
-</head>
-
-<body>
-
-<div id="device">
-
-    <!-- UI ART -->
-    <div id="shellArt"></div>
-
-    <!-- GAME -->
-    <div id="game">
-        <div id="score">Score: 0</div>
-    </div>
-
-    <!-- CONTROLS -->
-    <div id="controls">
-
-        <button id="btn-up"></button>
-        <button id="btn-down"></button>
-        <button id="btn-left"></button>
-        <button id="btn-right"></button>
-
-        <button id="btn-a"></button>
-        <button id="btn-b"></button>
-
-        <button id="btn-select"></button>
-        <button id="btn-start"></button>
-
-    </div>
-
-</div>
-
-<script>
-const game = document.getElementById("game");
-const scoreText = document.getElementById("score");
-
-/* =========================
-   PET
-========================= */
-const pet = document.createElement("div");
-pet.id = "pet";
-game.appendChild(pet);
-
-let petLane = 2;
-let score = 0;
-
-let currentPet = "base";
-let currentFrame = 0;
-let animTimer;
-
-/* lane positions */
-function getLanes(){
-    const w = game.clientWidth;
-
-    return [
-        w * 0.10,
-        w * 0.30,
-        w * 0.50,
-        w * 0.70,
-        w * 0.90
-    ];
-}
-
-/* pet x */
-function updatePetPos(){
-    const lanes = getLanes();
-
-    pet.style.left = lanes[petLane] + "px";
-    pet.style.transform = "translateX(-50%)";
-}
-
-/* load sheet */
-function loadPet(name){
-    currentPet = name;
-
-    pet.style.backgroundImage =
-        `url("assets/pet/${name}.png")`;
-
-    pet.style.backgroundSize = "384px 480px";
-}
-
-/* draw frame */
-function drawFrame(col,row){
-    pet.style.backgroundPosition =
-        `${-col*96}px ${-row*96}px`;
-}
-
-/* animate row */
-function playRow(row){
-
-    clearInterval(animTimer);
-
-    if(row === 4){
-        drawFrame(0,4);
-        return;
-    }
-
-    currentFrame = 0;
-
-    animTimer = setInterval(()=>{
-
-        drawFrame(currentFrame,row);
-
-        currentFrame++;
-        if(currentFrame > 3) currentFrame = 0;
-
-    },250);
-}
-
-/* move */
-function moveLeft(){
-    petLane--;
-    if(petLane < 0) petLane = 0;
-    updatePetPos();
-}
-
-function moveRight(){
-    petLane++;
-    if(petLane > 4) petLane = 4;
-    updatePetPos();
-}
-
-/* init pet */
-loadPet("base");
-playRow(0);
-updatePetPos();
-
-/* =========================
-   ITEMS
-========================= */
-const items = [
-    "assets/items/food.png",
-    "assets/items/drink.png"
-];
-
-function spawnItem(){
-
-    const item = document.createElement("div");
-    item.className = "item";
-
-    const chosen =
-        items[Math.floor(Math.random()*items.length)];
-
-    item.style.backgroundImage =
-        `url("${chosen}")`;
-
-    item.style.backgroundPosition = "0px 0px";
-
-    let lane = Math.floor(Math.random()*5);
-    let x = getLanes()[lane];
-    let y = -20;
-
-    item.style.left = x + "px";
-    item.style.top = y + "px";
-
-    game.appendChild(item);
-
-    const fall = setInterval(()=>{
-
-        y += 4;
-        item.style.top = y + "px";
-
-        /* catch */
-        if(y > game.clientHeight - 72 && lane === petLane){
-
-            score++;
-            scoreText.innerHTML =
-                "Score: " + score;
-
-            item.remove();
-            clearInterval(fall);
-
-            playRow(1);
-
-            setTimeout(()=>{
-                playRow(0);
-            },900);
-        }
-
-        /* miss */
-        if(y > game.clientHeight + 20){
-            item.remove();
-            clearInterval(fall);
-        }
-
-    },50);
-}
-
-setInterval(spawnItem,1400);
-
 /* =========================
    BUTTONS
 ========================= */
