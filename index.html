@@ -397,6 +397,31 @@ function spawnItem(){
 
         item.style.top = y + "px";
 
+       /* DEBUG HITBOX */
+
+let debugBox = document.getElementById("debugHitbox");
+
+if(!debugBox){
+
+    debugBox = document.createElement("div");
+
+    debugBox.id = "debugHitbox";
+
+    debugBox.style.position = "absolute";
+    debugBox.style.width = "70px";
+    debugBox.style.height = "20px";
+
+    debugBox.style.background = "rgba(255,0,0,0.35)";
+    debugBox.style.border = "1px solid red";
+
+    debugBox.style.pointerEvents = "none";
+
+    game.appendChild(debugBox);
+}
+
+debugBox.style.left = (petX - 2) + "px";
+debugBox.style.top = "175px";
+
         /* CATCH */
 
         if(y > 175 && Math.abs(x - petX) < 35){
