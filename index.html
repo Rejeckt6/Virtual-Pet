@@ -319,11 +319,11 @@ function playRow(row){
 
 function moveLeft(){
 
-    petX -= 25;
+    petX -= 60;
 
-    if(petX < 20){
+    if(petX < 35){
 
-        petX = 20;
+        petX = 35;
     }
 
     pet.style.left = petX + "px";
@@ -331,11 +331,11 @@ function moveLeft(){
 
 function moveRight(){
 
-    petX += 25;
+    petX += 60;
 
-    if(petX > 170){
+    if(petX > 215){
 
-        petX = 170;
+        petX = 215;
     }
 
     pet.style.left = petX + "px";
@@ -353,7 +353,7 @@ playRow(0);
    LANES
 ========================= */
 
-const lanes = [20,70,120,170];
+const lanes = [35,95,155,215];
 
 /* =========================
    ITEMS
