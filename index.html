@@ -408,8 +408,8 @@ if(!debugBox){
     debugBox.id = "debugHitbox";
 
     debugBox.style.position = "absolute";
-    debugBox.style.width = "42px";
-    debugBox.style.height = "12px";
+    debugBox.style.width = "36px";
+    debugBox.style.height = "10px";
 
     debugBox.style.background = "rgba(255,0,0,0.35)";
     debugBox.style.border = "1px solid red";
@@ -419,12 +419,12 @@ if(!debugBox){
     game.appendChild(debugBox);
 }
 
-debugBox.style.left = (petX + 8) + "px";
-debugBox.style.top = "205px";
+debugBox.style.left = (petX + 14) + "px";
+debugBox.style.top = "220px";
 
         /* CATCH */
 
-        if(y > 205 && Math.abs(x - (petX + 8)) < 22){
+        if(y > 220 && Math.abs(x - (petX + 14)) < 18){
 
             score++;
 
