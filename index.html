@@ -335,9 +335,10 @@ let currentLane = 1;
 
 function updatePetPosition(){
 
-    pet.style.left = lanes[currentLane] + "px";
-}
+    petX = lanes[currentLane];
 
+    pet.style.left = (petX - 12) + "px";
+}
 /* LEFT */
 
 function moveLeft(){
@@ -430,7 +431,7 @@ if(!debugBox){
     game.appendChild(debugBox);
 }
 
-debugBox.style.left = (petX + 14) + "px";
+debugBox.style.left = (petX + 10) + "px";
 debugBox.style.top = "226px";
 
         /* CATCH */
