@@ -63,11 +63,6 @@ body{
     z-index:1;
 }
 
-/* =========================
-   SCREEN SYSTEM
-========================= */
-
-let currentScreen = "pet";
    
 /* =========================
    GAME SCREEN
@@ -276,7 +271,31 @@ button{
 
 const game = document.getElementById("game");
 const scoreText = document.getElementById("score");
+   
+/* =========================
+   SCREEN SYSTEM
+========================= */
 
+let currentScreen = "pet";
+
+/* =========================
+   DEBUG HITBOX
+========================= */
+
+const debugBox = document.createElement("div");
+
+debugBox.id = "debugHitbox";
+
+debugBox.style.position = "absolute";
+debugBox.style.width = "36px";
+debugBox.style.height = "10px";
+
+debugBox.style.background = "rgba(255,0,0,0.35)";
+debugBox.style.border = "1px solid red";
+
+debugBox.style.pointerEvents = "none";
+
+game.appendChild(debugBox);
 /* =========================
    SCORE
 ========================= */
@@ -373,6 +392,22 @@ playRow(0);
 ========================= */
 
 const lanes = [32,92,152,212];
+   lanes.forEach(x => {
+
+    const line = document.createElement("div");
+
+    line.style.position = "absolute";
+    line.style.left = x + "px";
+    line.style.top = "0";
+
+    line.style.width = "1px";
+    line.style.height = "100%";
+
+    line.style.background = "rgba(255,255,255,0.15)";
+
+    game.appendChild(line);
+
+});
 
 /* current lane */
 
@@ -385,6 +420,11 @@ function updatePetPosition(){
     petX = lanes[currentLane];
 
     pet.style.left = (petX - 12) + "px";
+
+    /* move visible hitbox */
+
+    debugBox.style.left = (petX + 4) + "px";
+    debugBox.style.top = "226px";
 }
 /* LEFT */
 
@@ -445,7 +485,7 @@ function spawnItem(){
     let x = lane;
     let y = 0;
 
-    item.style.left = (x + 6) + "px";
+    item.style.left = (x + 10) + "px";
     item.style.top = y + "px";
 
     game.appendChild(item);
@@ -455,31 +495,6 @@ function spawnItem(){
         y += 4 + (score * 0.05);
 
         item.style.top = y + "px";
-
-       /* DEBUG HITBOX */
-
-let debugBox = document.getElementById("debugHitbox");
-
-if(!debugBox){
-
-    debugBox = document.createElement("div");
-
-    debugBox.id = "debugHitbox";
-
-    debugBox.style.position = "absolute";
-    debugBox.style.width = "36px";
-    debugBox.style.height = "10px";
-
-    debugBox.style.background = "rgba(255,0,0,0.35)";
-    debugBox.style.border = "1px solid red";
-
-    debugBox.style.pointerEvents = "none";
-
-    game.appendChild(debugBox);
-}
-
-debugBox.style.left = (petX + 4) + "px";
-debugBox.style.top = "226px";
 
         /* CATCH */
 
